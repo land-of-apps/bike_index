@@ -51,7 +51,7 @@ task seed_test_users_and_bikes: :environment do
         puts "\n Ownership error \n #{ownership.errors.messages}"
         raise StandardError
       end
-      puts "New bike made by #{bike.manufacturer.name}"
+      puts "New bike made by #{bike.manufacturer&.name}"
     else
       puts "\n Bike error \n #{bike.errors.messages}"
     end
