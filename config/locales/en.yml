@@ -1606,6 +1606,7 @@ en:
       block_the_spam:
         please_sign_in: Please sign in to send that message
       create:
+        please_sign_in: Please sign in to send that message
         thanks_for_your_message: Thanks for your message!
         we_will_contact_you: Thank you! We'll contact you soon.
     integrations:
@@ -2146,7 +2147,7 @@ en:
     - Fri
     - Sat
     abbr_month_names:
-    - 
+    -
     - Jan
     - Feb
     - Mar
@@ -2172,7 +2173,7 @@ en:
       long: "%B %d, %Y"
       short: "%b %d"
     month_names:
-    - 
+    -
     - January
     - February
     - March
