@@ -183,9 +183,9 @@ module ControllerHelpers
     if scope.blank? && controller_method.blank?
       controller_method =
         caller_locations
-          .slice(0, 2)
+          .slice(0, 10)
           .map(&:label)
-          .reject { |label| label =~ /rescue in/ }
+          .reject { |label| label =~ /(rescue in|block)/ }
           .first
     end
 
