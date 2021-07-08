@@ -1,0 +1,38 @@
+name: bike_index
+packages:
+- path: app/controllers
+- path: app/helpers
+- path: app/integrations
+- path: app/mailers
+- path: app/models
+- path: app/services
+- path: app/uploaders
+- path: app/workers
+- gem: redis
+- gem: sidekiq
+- gem: geocoder
+- gem: omniauth
+- gem: carrierwave
+- gem: carrierwave_backgrounder
+# Takes 2.4 seconds to load
+#- gem: axlsx
+- gem: wicked_pdf
+- gem: wkhtmltopdf-binary
+- gem: rmagick
+- gem: mini_magick
+- gem: rqrcode
+- gem: rqrcode-rails3
+- gem: simple_spark
+- gem: twitter
+# Takes almost 9 seconds to load
+#- gem: twilio-ruby
+#  package: twilio
+- gem: stripe
+- gem: fog-aws
+- gem: MailchimpMarketing
+- gem: api-pagination
+- gem: doorkeeper
+- gem: grape
+- gem: swagger-ui_rails
+- gem: wine_bouncer
+- gem: vcr

@@ -5,6 +5,10 @@ source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 git_source(:gitlab) { |repo| "https://gitlab.com/#{repo}.git" }
 
+group :development, :test do
+  gem "appmap", github: 'applandinc/appmap-ruby', branch: 'depends-task'
+end
+
 # Update CircleCI config and Dockerfile if Ruby version is bumped
 ruby "2.7.3"
 gem "rack", "2.0.8"
