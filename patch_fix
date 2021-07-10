@@ -1,0 +1,43 @@
+diff --git a/config/locales/en.yml b/config/locales/en.yml
+index 481f3d0e..8d341f93 100644
+--- a/config/locales/en.yml
++++ b/config/locales/en.yml
+@@ -1606,6 +1606,7 @@ en:
+       block_the_spam:
+         please_sign_in: Please sign in to send that message
+       create:
++        please_sign_in: Please sign in to send that message
+         thanks_for_your_message: Thanks for your message!
+         we_will_contact_you: Thank you! We'll contact you soon.
+     integrations:
+@@ -2146,7 +2147,7 @@ en:
+     - Fri
+     - Sat
+     abbr_month_names:
+-    - 
++    -
+     - Jan
+     - Feb
+     - Mar
+@@ -2172,7 +2173,7 @@ en:
+       long: "%B %d, %Y"
+       short: "%b %d"
+     month_names:
+-    - 
++    -
+     - January
+     - February
+     - March
+diff --git a/lib/tasks/seed_tasks.rake b/lib/tasks/seed_tasks.rake
+index ce8b9b25..011922c1 100644
+--- a/lib/tasks/seed_tasks.rake
++++ b/lib/tasks/seed_tasks.rake
+@@ -51,7 +51,7 @@ task seed_test_users_and_bikes: :environment do
+         puts "\n Ownership error \n #{ownership.errors.messages}"
+         raise StandardError
+       end
+-      puts "New bike made by #{bike.manufacturer.name}"
++      puts "New bike made by #{bike.manufacturer&.name}"
+     else
+       puts "\n Bike error \n #{bike.errors.messages}"
+     end

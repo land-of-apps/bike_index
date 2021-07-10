@@ -1,0 +1,123 @@
+diff --git a/spec/models/ad_spec.rb b/spec/models/ad_spec.rb
+deleted file mode 100644
+index 9a185879..00000000
+--- a/spec/models/ad_spec.rb
++++ /dev/null
+@@ -1,4 +0,0 @@
+-require "rails_helper"
+-
+-RSpec.describe Ad, type: :model do
+-end
+diff --git a/spec/models/front_gear_type_spec.rb b/spec/models/front_gear_type_spec.rb
+deleted file mode 100644
+index 3bbff1df..00000000
+--- a/spec/models/front_gear_type_spec.rb
++++ /dev/null
+@@ -1,4 +0,0 @@
+-require "rails_helper"
+-
+-RSpec.describe FrontGearType, type: :model do
+-end
+diff --git a/spec/models/invoice_organization_feature_spec.rb b/spec/models/invoice_organization_feature_spec.rb
+deleted file mode 100644
+index 3ab4914a..00000000
+--- a/spec/models/invoice_organization_feature_spec.rb
++++ /dev/null
+@@ -1,4 +0,0 @@
+-require "rails_helper"
+-
+-RSpec.describe InvoiceOrganizationFeature, type: :model do
+-end
+diff --git a/spec/models/listicle_spec.rb b/spec/models/listicle_spec.rb
+deleted file mode 100644
+index 3b0bc710..00000000
+--- a/spec/models/listicle_spec.rb
++++ /dev/null
+@@ -1,4 +0,0 @@
+-require "rails_helper"
+-
+-RSpec.describe Listicle, type: :model do
+-end
+diff --git a/spec/models/normalized_serial_segment_spec.rb b/spec/models/normalized_serial_segment_spec.rb
+deleted file mode 100644
+index 2c8d5a90..00000000
+--- a/spec/models/normalized_serial_segment_spec.rb
++++ /dev/null
+@@ -1,4 +0,0 @@
+-require "rails_helper"
+-
+-RSpec.describe NormalizedSerialSegment, type: :model do
+-end
+diff --git a/spec/models/notification_spec.rb b/spec/models/notification_spec.rb
+deleted file mode 100644
+index c2a886e5..00000000
+--- a/spec/models/notification_spec.rb
++++ /dev/null
+@@ -1,5 +0,0 @@
+-require "rails_helper"
+-
+-RSpec.describe Notification, type: :model do
+-  pending "add some examples to (or delete) #{__FILE__}"
+-end
+diff --git a/spec/models/rear_gear_type_spec.rb b/spec/models/rear_gear_type_spec.rb
+deleted file mode 100644
+index 45826adc..00000000
+--- a/spec/models/rear_gear_type_spec.rb
++++ /dev/null
+@@ -1,4 +0,0 @@
+-require "rails_helper"
+-
+-RSpec.describe RearGearType, type: :model do
+-end
+diff --git a/spec/models/theft_alert_plan_spec.rb b/spec/models/theft_alert_plan_spec.rb
+deleted file mode 100644
+index 014aa4ad..00000000
+--- a/spec/models/theft_alert_plan_spec.rb
++++ /dev/null
+@@ -1,4 +0,0 @@
+-require "rails_helper"
+-
+-RSpec.describe TheftAlertPlan, type: :model do
+-end
+diff --git a/spec/uploaders/image_uploader_spec.rb b/spec/uploaders/image_uploader_spec.rb
+deleted file mode 100644
+index 0fa4e60d..00000000
+--- a/spec/uploaders/image_uploader_spec.rb
++++ /dev/null
+@@ -1,36 +0,0 @@
+-require "rails_helper"
+-require "carrierwave/test/matchers"
+-
+-RSpec.describe ImageUploader do
+-  include CarrierWave::Test::Matchers
+-
+-  # TODO: Test this!
+-
+-  # before do
+-  #   ImageUploader.enable_processing = true
+-  #   @uploader = ImageUploader.new(@user, :avatar)
+-  #   @uploader.store!(File.open(File.join(Rails.root, 'spec', 'fixtures', 'bike.jpg')))
+-  # end
+-
+-  # after do
+-  #   MyUploader.enable_processing = false
+-  #   @uploader.remove!
+-  # end
+-
+-  context "the small version" do
+-    xit "scales down a landscape image to be exactly 64 by 64 pixels" do
+-      expect(@uploader.large).to be_no_larger_than(1200, 900)
+-    end
+-  end
+-
+-  context "the small version" do
+-    xit "scales down a landscape image to fit within 200 by 200 pixels" do
+-      expect(@uploader.medium).to be_no_larger_than(700, 525)
+-    end
+-  end
+-  context "the small version" do
+-    xit "scales down a landscape image to fit within 200 by 200 pixels" do
+-      expect(@uploader.small).to have_dimensions(300, 300)
+-    end
+-  end
+-end

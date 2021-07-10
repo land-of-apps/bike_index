@@ -1,0 +1,182 @@
+diff --git a/Gemfile b/Gemfile
+index 804cead5..63e6b7b9 100644
+--- a/Gemfile
++++ b/Gemfile
+@@ -5,6 +5,10 @@ source "https://rubygems.org"
+ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+ git_source(:gitlab) { |repo| "https://gitlab.com/#{repo}.git" }
+ 
++group :development, :test do
++  gem "appmap", github: 'applandinc/appmap-ruby', branch: 'depends-task'
++end
++
+ # Update CircleCI config and Dockerfile if Ruby version is bumped
+ ruby "2.7.3"
+ gem "rack", "2.0.8"
+diff --git a/Gemfile.lock b/Gemfile.lock
+index 64a1b4b7..a1abaeda 100644
+--- a/Gemfile.lock
++++ b/Gemfile.lock
+@@ -1,3 +1,14 @@
++GIT
++  remote: https://github.com/applandinc/appmap-ruby.git
++  revision: 6c2f4381c98ce77dcd795c3fde516c3acd28bae2
++  branch: depends-task
++  specs:
++    appmap (0.60.0)
++      activesupport
++      method_source
++      rack
++      reverse_markdown
++
+ GIT
+   remote: https://github.com/bikeindex/rqrcode-rails3.git
+   revision: 712b88d933c152a1bc3411c5c9ef899fec240d5f
+@@ -136,7 +147,7 @@ GEM
+       coffee-script-source
+       execjs
+     coffee-script-source (1.12.2)
+-    concurrent-ruby (1.1.8)
++    concurrent-ruby (1.1.9)
+     connection_pool (2.2.3)
+     crack (0.4.3)
+       safe_yaml (~> 1.0.0)
+@@ -355,7 +366,7 @@ GEM
+       rake
+     mini_magick (4.9.5)
+     mini_mime (1.1.0)
+-    mini_portile2 (2.5.0)
++    mini_portile2 (2.5.3)
+     minitest (5.14.4)
+     monetize (1.9.2)
+       money (~> 6.12)
+@@ -376,7 +387,7 @@ GEM
+     naught (1.1.0)
+     nenv (0.3.0)
+     nio4r (2.5.7)
+-    nokogiri (1.11.3)
++    nokogiri (1.11.7)
+       mini_portile2 (~> 2.5.0)
+       racc (~> 1.4)
+     notiffany (0.1.3)
+@@ -520,8 +531,10 @@ GEM
+     responders (2.4.1)
+       actionpack (>= 4.2.0, < 6.0)
+       railties (>= 4.2.0, < 6.0)
++    reverse_markdown (2.0.0)
++      nokogiri
+     rexml (3.2.5)
+-    rmagick (4.0.0)
++    rmagick (4.2.2)
+     rqrcode (0.10.1)
+       chunky_png (~> 1.0)
+     rspec (3.9.0)
+@@ -690,6 +703,7 @@ DEPENDENCIES
+   MailchimpMarketing!
+   active_model_serializers (~> 0.9.3)
+   api-pagination
++  appmap!
+   axlsx (~> 3.0.0.pre)
+   bcrypt (~> 3.1.7)
+   bootsnap
+diff --git a/app/controllers/concerns/controller_helpers.rb b/app/controllers/concerns/controller_helpers.rb
+index c6de763c..4f765ab5 100644
+--- a/app/controllers/concerns/controller_helpers.rb
++++ b/app/controllers/concerns/controller_helpers.rb
+@@ -183,9 +183,9 @@ module ControllerHelpers
+     if scope.blank? && controller_method.blank?
+       controller_method =
+         caller_locations
+-          .slice(0, 2)
++          .slice(0, 10)
+           .map(&:label)
+-          .reject { |label| label =~ /rescue in/ }
++          .reject { |label| label =~ /(rescue in|block)/ }
+           .first
+     end
+ 
+diff --git a/appmap.yml b/appmap.yml
+new file mode 100644
+index 00000000..ed755a88
+--- /dev/null
++++ b/appmap.yml
+@@ -0,0 +1,38 @@
++name: bike_index
++packages:
++- path: app/controllers
++- path: app/helpers
++- path: app/integrations
++- path: app/mailers
++- path: app/models
++- path: app/services
++- path: app/uploaders
++- path: app/workers
++- gem: redis
++- gem: sidekiq
++- gem: geocoder
++- gem: omniauth
++- gem: carrierwave
++- gem: carrierwave_backgrounder
++# Takes 2.4 seconds to load
++#- gem: axlsx
++- gem: wicked_pdf
++- gem: wkhtmltopdf-binary
++- gem: rmagick
++- gem: mini_magick
++- gem: rqrcode
++- gem: rqrcode-rails3
++- gem: simple_spark
++- gem: twitter
++# Takes almost 9 seconds to load
++#- gem: twilio-ruby
++#  package: twilio
++- gem: stripe
++- gem: fog-aws
++- gem: MailchimpMarketing
++- gem: api-pagination
++- gem: doorkeeper
++- gem: grape
++- gem: swagger-ui_rails
++- gem: wine_bouncer
++- gem: vcr
+diff --git a/lib/tasks/appmap.rake b/lib/tasks/appmap.rake
+new file mode 100644
+index 00000000..a0af66de
+--- /dev/null
++++ b/lib/tasks/appmap.rake
+@@ -0,0 +1,35 @@
++# frozen_string_literal: true
++
++lambda do
++  def relative_path(file)
++    file.index(Dir.pwd) == 0 ? file[Dir.pwd.length+1..-1] : file
++  end
++
++  namespace :appmap do
++    AppMap.configuration.swagger_config.project_version = [ 'v3', `git rev-parse --short HEAD`.strip ].join('_')
++    AppMap::Swagger::RakeTasks.define_tasks
++
++    test_runner = lambda do |test_files|
++      require "shellwords"
++      file_list = test_files.map(&:shellescape).join(" ")
++      env = { 'RAILS_ENV' => 'test', 'APPMAP' => 'true', 'DISABLE_SPRING' => '1' }
++      system(env, "bundle exec rspec --format documentation -t '~empty' -t '~large' -t '~unstable' #{file_list}")
++    end
++
++    AppMap::Depends::RakeTasks.define_tasks test_runner: test_runner
++
++    task :architecture do
++      test_files = File.read('ARCHITECTURE.md').scan(/\[[^\(]+\(([^\]]+)\)\]\(.*\.appmap\.json\)/).flatten
++      test_files = test_files.map(&method(:relative_path)).uniq.map(&:shellescape)
++
++      env = { 'RAILS_ENV' => 'test', 'APPMAP' => 'true', 'DISABLE_SPRING' => '1' }
++      exit 1 unless system(env, "bundle exec rspec --format documentation #{test_files.join(' ')}")
++    end
++
++    task :architecture do
++    end
++  end
++
++  desc 'Bring AppMaps up to date with local file modifications, and updated derived data such as Swagger files'
++  task :appmap => :'appmap:depends:update'
++end.call if %w[test development].member?(Rails.env)
